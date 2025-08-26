@@ -1,19 +1,33 @@
-ARG BASE=nvidia/cuda:11.8.0-base-ubuntu22.04
-FROM ${BASE}
+# Use official Python base image
+FROM python:3.10-slim
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y --no-install-recommends gcc g++ make python3 python3-dev python3-pip python3-venv python3-wheel espeak-ng libsndfile1-dev && rm -rf /var/lib/apt/lists/*
-RUN pip3 install llvmlite --ignore-installed
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    GRADIO_SERVER_NAME=0.0.0.0
 
-# Install Dependencies:
-RUN pip3 install torch torchaudio --extra-index-url https://download.pytorch.org/whl/cu118
-RUN rm -rf /root/.cache/pip
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    ffmpeg \
+    libsndfile1 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy TTS repository contents:
-WORKDIR /root
-COPY . /root
+# Create app directory
+WORKDIR /app
 
-RUN make install
+# Copy requirements.txt separately to leverage Docker caching
+COPY requirements.txt .
 
-ENTRYPOINT ["tts"]
-CMD ["--help"]
+# Install Python dependencies
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Expose the port Gradio uses (7860 by default)
+EXPOSE 7860
+
+# Command to run the app
+CMD ["python", "app.py"]
