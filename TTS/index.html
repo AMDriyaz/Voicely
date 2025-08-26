@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coqui TTS UI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #f9f9f9;
+    }
+    h1 { text-align: center; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    textarea {
+      width: 100%; height: 100px; padding: 10px;
+      margin-top: 5px; font-size: 14px;
+    }
+    select, button {
+      margin-top: 10px; padding: 10px; width: 100%;
+      font-size: 14px;
+    }
+    audio { margin-top: 20px; width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>🎙️ Coqui TTS</h1>
+
+  <label for="text">Enter Text:</label>
+  <textarea id="text" placeholder="Type something to convert..."></textarea>
+
+  <label for="voice">Select Voice:</label>
+  <select id="voice">
+    <option value="en_ljspeech">English - LJSpeech</option>
+    <option value="en_vctk">English - VCTK</option>
+    <option value="de_thorsten">German - Thorsten</option>
+  </select>
+
+  <label for="lang">Select Language:</label>
+  <select id="lang">
+    <option value="en">English</option>
+    <option value="de">German</option>
+    <option value="fr">French</option>
+  </select>
+
+  <button onclick="generateTTS()">Generate Audio</button>
+
+  <audio id="player" controls></audio>
+  <a id="downloadLink" href="#" download="output.wav" style="display:none;">⬇️ Download Audio</a>
+
+  <script>
+    async function generateTTS() {
+      const text = document.getElementById("text").value;
+      const voice = document.getElementById("voice").value;
+      const lang = document.getElementById("lang").value;
+
+      if (!text) { alert("Please enter some text!"); return; }
+
+      // Call your backend API (Flask/FastAPI/Django) that runs Coqui TTS
+      const response = await fetch("/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, voice, lang })
+      });
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Play audio
+      const player = document.getElementById("player");
+      player.src = url;
+
+      // Enable download
+      const dl = document.getElementById("downloadLink");
+      dl.href = url;
+      dl.style.display = "block";
+    }
+  </script>
+</body>
+</html>
