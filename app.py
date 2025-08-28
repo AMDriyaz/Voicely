@@ -62,18 +62,23 @@ with gr.Blocks(theme=gr.themes.Default(), analytics_enabled=False) as demo:
     speaker_dropdown = gr.Dropdown(choices=["Default"], label="Select Speaker", allow_custom_value=True)
     output_audio = gr.Audio(type="filepath")
 
-    voice_dropdown.change(fn=get_speakers, inputs=voice_dropdown, outputs=speaker_dropdown)
+    voice_dropdown.change(
+        fn=get_speakers,
+        inputs=voice_dropdown,
+        outputs=speaker_dropdown
+    )
 
     generate_btn = gr.Button("Generate Speech")
-    generate_btn.click(fn=generate_speech,
-                       inputs=[text_input, voice_dropdown, speaker_dropdown],
-                       outputs=output_audio)
+    generate_btn.click(
+        fn=generate_speech,
+        inputs=[text_input, voice_dropdown, speaker_dropdown],
+        outputs=output_audio
+    )
 
 if __name__ == "__main__":
-    
-port = int(os.environ.get("PORT", 80))  # default to 80
-demo.launch(
-    server_name="0.0.0.0",
-    server_port=port,
-    share=False
-)
+    port = int(os.environ.get("PORT", 80))  # default to 80
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=port,
+        share=False
+    )
