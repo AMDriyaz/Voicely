@@ -19,7 +19,7 @@ COPY app.py .
 RUN pip install TTS gradio
 
 # CapRover injects $PORT
-EXPOSE 8080
+EXPOSE 80
 
 # Run app
 CMD ["python", "-u", "app.py"]

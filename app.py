@@ -70,11 +70,10 @@ with gr.Blocks(theme=gr.themes.Default(), analytics_enabled=False) as demo:
                        outputs=output_audio)
 
 if __name__ == "__main__":
-    # CapRover provides PORT env variable
-    port = int(os.environ.get("PORT", 8080))  # fallback 8080 for local dev
-    demo.launch(
-        server_name="0.0.0.0",
-        server_port=port,
-        share=False,
-        inbrowser=False
-    )
+    
+port = int(os.environ.get("PORT", 80))  # default to 80
+demo.launch(
+    server_name="0.0.0.0",
+    server_port=port,
+    share=False
+)
