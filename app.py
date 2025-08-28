@@ -1,5 +1,6 @@
 import gradio as gr
 from TTS.api import TTS
+import os
 
 # Voice options
 voice_options = {
@@ -68,4 +69,12 @@ with gr.Blocks(theme=gr.themes.Default(), analytics_enabled=False) as demo:
                        inputs=[text_input, voice_dropdown, speaker_dropdown],
                        outputs=output_audio)
 
-demo.launch()
+if __name__ == "__main__":
+    # CapRover provides PORT env variable
+    port = int(os.environ.get("PORT", 8080))  # fallback 8080 for local dev
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=port,
+        share=False,
+        inbrowser=False
+    )

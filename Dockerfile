@@ -1,20 +1,31 @@
+# --------------------------
 # Base image with Python
+# --------------------------
 FROM python:3.10-slim
 
+# Set working directory
 WORKDIR /app
 
+# Install OS-level dependencies (speech + audio support)
 RUN apt-get update && \
-    apt-get install -y git espeak ffmpeg libsndfile1 && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        git \
+        espeak \
+        ffmpeg \
+        libsndfile1 \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
+# Upgrade pip + setuptools + wheel (important for TTS builds)
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 
+# Copy app code
 COPY app.py .
 
-RUN pip install TTS gradio
+# Install Python dependencies (no cache to save disk space)
+RUN pip install --no-cache-dir TTS gradio
 
-# Expose port 80 (CapRover default)
+# CapRover dynamically injects PORT env variable
 EXPOSE 80
 
-# Run Gradio on port 80
-CMD ["python", "app.py", "--server.port", "80", "--server.name", "0.0.0.0"]
+# Start app with CapRover's PORT env
+CMD ["python", "app.py"]
