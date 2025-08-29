@@ -32,7 +32,7 @@ def get_speakers(voice_label):
 
 def generate_speech(text, voice_label, speaker_label):
     if not text.strip():
-        text = "Hello world"
+        text = "Hey there! I’m Voicely, your A.I voice buddy. I’m so excited to help you bring your words to life. Let’s turn your thoughts into a voice that feels truly yours."
 
     model_name = label_to_model[voice_label]
     tts = get_tts_model(model_name)
